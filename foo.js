@@ -24,8 +24,8 @@
     var c = 'constructor',
         func = BaseClass[c],
         call = BaseClass.call,
-        i = 0, key,
-        p, value, gl = this;
+        isMethod, i = 0, key,
+        props, value, gl = this;
 
     // Class constructor
     // Using new creates a new instance as usual
@@ -50,17 +50,16 @@
     proto[c] = BaseClass;
 
     // Extend with members and base classes
-    while((p = arguments[i++])) {
+    while((props = arguments[i++])) {
 
         // Here we go... this stuff can't be inlined automatically
-        for(key in (value = p.prototype)
-                    && value[c] == BaseClass ? (p = p.$$) : p) {
+        for(key in (value = props.prototype)
+                    && value[c] == BaseClass ? (props = props.$$) : props) {
 
-            value = $proto[key] = p[key];
+            value = $proto[key] = props[key];
 
             // $ prefixed stuff is static
-            // re-use p here to save a few more bytes
-            p = key[0] != '$' && (proto[key] = value);
+            isMethod = key[0] != '$' && (proto[key] = value);
 
             // Create unbound versions of the methods
             clas[key] = (value[c] == func)
@@ -70,7 +69,7 @@
                                 return callee.apply(context, arguments);
                             };
 
-                        }(p ? value : clas, p ? call : value))
+                        }(isMethod ? value : clas, isMethod ? call : value))
 
                 : value;
 
