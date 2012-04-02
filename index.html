@@ -1,0 +1,165 @@
+<!doctype html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="chrome=1">
+    <title>Class by BonsaiDen</title>
+    <link rel="stylesheet" href="stylesheets/styles.css">
+    <link rel="stylesheet" href="stylesheets/pygment_trac.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js"></script>
+    <script src="javascripts/main.js"></script>
+    <!--[if lt IE 9]>
+      <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
+
+  </head>
+  <body>
+
+      <header>
+        <h1>Class</h1>
+        <p>Featureful, yet simple Classes for JavaScript</p>
+      </header>
+
+      <div id="banner">
+        <span id="logo"></span>
+
+        <a href="https://github.com/BonsaiDen/Class" class="button fork"><strong>Fork On GitHub</strong></a>
+        <div class="downloads">
+          <span>Downloads:</span>
+          <ul>
+            <li><a href="https://github.com/BonsaiDen/Class/zipball/master" class="button">ZIP</a></li>
+            <li><a href="https://github.com/BonsaiDen/Class/tarball/master" class="button">TAR</a></li>
+          </ul>
+        </div>
+
+      </div><!-- end banner -->
+
+    <div class="wrapper">
+      <nav>
+        <ul></ul>
+      </nav>
+      <section>
+        <p>A trivial class fill in for JavaScript that focusses on extensible and low overhead.</p>
+
+<h2>The Basics</h2>
+
+<p>Look, a <strong>Class</strong>!</p>
+
+<pre><code>var Foo = Class();
+
+x = new Foo();
+</code></pre>
+
+<p>A <em>Class</em> can have a <strong>Constructor</strong>:</p>
+
+<pre><code>var Foo = Class(function(a, b) {
+    this.a = a;
+    this.b = b;
+});
+
+x = new Foo(1, 2);
+</code></pre>
+
+<p>As well, as <strong>Methods</strong>:</p>
+
+<pre><code>var Foo = Class(function(name) {
+    this.name = name;
+
+}, {
+
+    bar: function() {
+        return this.name;
+    }
+
+});
+
+x = new Foo('tuff');
+x.bar(); =&gt; 'tuff'
+</code></pre>
+
+<p>A Class will always have a <strong>implicit</strong> default <em>Constructor</em>:</p>
+
+<pre><code>var Foo = Class({
+
+    test: function() {
+        return 'Hello World!';
+    }
+
+});
+
+x = new Foo();
+x.test(); =&gt; 'Hello World!'
+</code></pre>
+
+<h2>Inheritance</h2>
+
+<p>Classes can <strong>inherit</strong> from each other:</p>
+
+<pre><code>var Foo = Class(function(name) {
+    this.name = name;
+});
+
+var Bar = Class(Foo, {
+
+    test: function() {
+        return this.name;
+    }
+
+});
+
+x = new Bar('Ivo');
+x.test(); =&gt; 'Ivo'
+</code></pre>
+
+<p>Each Class can be used as an <strong>unbound</strong> <em>Constructor</em> as well:</p>
+
+<pre><code>var Bar = Class(function() {
+    Foo(this, 'Ivo');
+
+}, Foo);
+</code></pre>
+
+<p>Which allows for <em>multiple</em> inheritance:</p>
+
+<pre><code>var Bar = Class(function() {
+    Foo(this, 'Ivo');
+
+}, Foo, Baz);
+</code></pre>
+
+<p>Which is supported by <em>unbound</em> methods:</p>
+
+<pre><code>Foo.bar(x); =&gt; 'tuff'
+</code></pre>
+
+<p>And <strong>static</strong> methods - these are prefixed with <code>$</code>:</p>
+
+<pre><code>var Foo = Class({
+
+    $test: function() {
+        return 'No instance needed!';
+    }
+
+});
+
+Foo.$test(); =&gt; 'No instance needed!'
+</code></pre>
+
+<h2>TODO</h2>
+
+<ul>
+<li>Further reduce minified size </li>
+<li>Finish tests for all features</li>
+</ul><h2>License</h2>
+
+<p>Licensed under MIT.</p>
+      </section>
+      <footer>
+        <p>Project maintained by <a href="https://github.com/BonsaiDen">BonsaiDen</a></p>
+        <p><small>Hosted on GitHub Pages &mdash; Theme by <a href="https://twitter.com/#!/michigangraham">mattgraham</a></small></p>
+      </footer>
+    </div>
+    <!--[if !IE]><script>fixScale(document);</script><!--<![endif]-->
+  </body>
+</html>
