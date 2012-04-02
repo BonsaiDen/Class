@@ -74,7 +74,7 @@ Classes can __inherit__ from each other:
     x.test(); => 'Ivo'
 
 
-Each class can be used as an __unbound__ *Constructor* as well:
+Each Class can be used as an __unbound__ *Constructor* as well:
 
     var Bar = Class(function() {
         Foo(this, 'Ivo');
@@ -96,7 +96,7 @@ Which is supported by *unbound* methods:
 
 And __static__ methods - these are prefixed with `$`:
 
-    var Foo = new Class({
+    var Foo = Class({
 
         $test: function() {
             return 'No instance needed!';
