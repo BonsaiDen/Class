@@ -1,7 +1,8 @@
-Flexible, simple and short Classes
-==================================
+Featureful, yet simple Classes for JavaScript
+=============================================
 
-A trivial, small and featureful class fill in for JavaScript.
+A trivial class fill in for JavaScript that focusses on extensible and low overhead.
+
 
 ## The Basics
 
