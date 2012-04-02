@@ -75,7 +75,7 @@ x = new Foo(1, 2);
 });
 
 x = new Foo('tuff');
-x.bar(); =&gt; 'tuff'
+x.bar(); // 'tuff'
 </code></pre>
 
 <p>A Class will always have a <strong>implicit</strong> default <em>Constructor</em>:</p>
@@ -89,7 +89,7 @@ x.bar(); =&gt; 'tuff'
 });
 
 x = new Foo();
-x.test(); =&gt; 'Hello World!'
+x.test(); // 'Hello World!'
 </code></pre>
 
 <h2>Inheritance</h2>
@@ -109,7 +109,7 @@ var Bar = Class(Foo, {
 });
 
 x = new Bar('Ivo');
-x.test(); =&gt; 'Ivo'
+x.test(); // 'Ivo'
 </code></pre>
 
 <p>Each Class can be used as an <strong>unbound</strong> <em>Constructor</em> as well:</p>
@@ -130,7 +130,7 @@ x.test(); =&gt; 'Ivo'
 
 <p>Which is supported by <em>unbound</em> methods:</p>
 
-<pre><code>Foo.bar(x); =&gt; 'tuff'
+<pre><code>Foo.bar(x); // 'tuff'
 </code></pre>
 
 <p>And <strong>static</strong> methods - these are prefixed with <code>$</code>:</p>
@@ -143,7 +143,7 @@ x.test(); =&gt; 'Ivo'
 
 });
 
-Foo.$test(); =&gt; 'No instance needed!'
+Foo.$test(); // 'No instance needed!'
 </code></pre>
 
 <h2>TODO</h2>

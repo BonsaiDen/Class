@@ -503,8 +503,8 @@ table {
 }
 
 body {
-  font: 14px/1.5 "Quattrocento Sans", "Helvetica Neue", Helvetica, Arial, sans-serif;
-  color: #666;
+  font: 16px "Quattrocento Sans", "Helvetica Neue", Helvetica, Arial, sans-serif;
+  color: #444;
   font-weight: 300;
   margin: 0px;
   padding: 0px 0 20px 0px;
@@ -582,8 +582,7 @@ blockquote {
 }
 
 code {
-  font-family: "Lucida Sans", Monaco, Bitstream Vera Sans Mono, Lucida Console, Terminal;
-  font-size: 13px;
+  font-size: 14px;
   color: #efefef;
   text-shadow: 0px 1px 0px #000;
   margin: 0 4px;
@@ -854,6 +853,7 @@ nav ul a:hover {
 footer {
   width: 180px;
   position: fixed;
+  font-weight: 500;
   left: 50%;
   margin-left: -530px;
   bottom: 20px;
