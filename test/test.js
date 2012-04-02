@@ -59,7 +59,7 @@ function unboundConstructor(test, clas, a, b) {
 
     test.strictEqual(typeof clas, 'function');
 
-    var instance = {};
+    var instance = { 'me': 123 };
     test.strictEqual(clas(instance, a, b), undefined);
     test.strictEqual(instance.a, a);
     test.strictEqual(instance.b, b);
@@ -80,7 +80,7 @@ function unboundMethod(test, instance, method, a, b) {
     test.strictEqual(typeof method, 'function');
     test.strictEqual(typeof instance, 'object');
 
-    var result = method.call(null, instance, a, b);
+    var result = method(instance, a, b);
     test.deepEqual(result, [instance, instance.a, instance.b, a, b]);
 
 }
@@ -104,9 +104,12 @@ var tests = nodeunit.testCase({
         var Foo = new Class();
         test.strictEqual(typeof Foo, 'function');
         test.strictEqual(typeof new Foo(), 'object');
+
+        Foo();
         test.done();
 
     },
+
 
     'Methodless': function(test) {
 
@@ -159,12 +162,60 @@ var tests = nodeunit.testCase({
     },
 
     'Single Inheritance': function(test) {
-        // test method
-        // test unbound ctor of base
-        // test unbound method
-        // test method inherited
-        // test unbound inherited
+
+        // Test against non-working values for the this inside the class thing
+        // sounds crazy, but prevents errors!
+        var namespace = {
+            Foo: classFactory('method', 'test')
+        };
+
+        namespace.Bar = Class(function() {
+            namespace.Foo(this, 1, 2);
+
+        }, namespace.Foo, {
+
+            custom: function(a, b) {
+                return [this, this.a, this.b, a, b];
+            }
+
+        });
+
+        var bar = new namespace.Bar(1, 2);
+
+        clas(test, bar, 1, 2);
+        unboundConstructor(test, namespace.Bar, 1, 2);
+
+        boundMethod(test, bar, bar.method, 4, 5);
+        boundMethod(test, bar, bar.test, 6, 7);
+
+        unboundMethod(test, bar, namespace.Bar.method, 8, 9);
+        unboundMethod(test, bar, namespace.Bar.test, 10, 11);
+
+        boundMethod(test, bar, bar.custom, 6, 7);
+        unboundMethod(test, bar, namespace.Bar.custom, 10, 11);
+
         test.done();
+    },
+
+    'Single Inheritance(Constructless)': function(test) {
+
+        var Foo = classFactory('method', 'test');
+        var Test = Class(Foo);
+        var Bar = Class(Test, {
+
+            custom: function(a, b) {
+                return [this, this.a, this.b, a, b];
+            }
+
+        });
+
+        var bar = new Bar(1, 2);
+        clas(test, bar, 1, 2);
+
+        unboundConstructor(test, Bar, 1, 2);
+
+        test.done();
+
     },
 
     'Multi Inheritance': function(test) {
@@ -198,7 +249,9 @@ var tests = nodeunit.testCase({
     'Static Inheritance': function(test) {
 
         var Bar = classFactory('method', '$test'),
-            Foo = Class(Bar, {
+            Foo = Class(function(a, b) {
+                Bar(this, a, b);
+            }, Bar, {
                 method: function(a, b) {
                     return Bar.method(this, a, b);
                 }
@@ -215,13 +268,8 @@ var tests = nodeunit.testCase({
         test.strictEqual(foo.$test, undefined);
         staticMethod(test, Foo, Foo.$test, 10, 11);
 
-        // test method
-        // test unbound method
-        // test static method
-        // test method inherited
-        // test unbound method inherited
-        // test static method inherited
         test.done();
+
     }
 
 });
