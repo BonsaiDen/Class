@@ -37,7 +37,7 @@ As well, as __Methods__:
     });
 
     x = new Foo('tuff');
-    x.bar(); => 'tuff'
+    x.bar(); // 'tuff'
 
 
 A Class will always have a __implicit__ default *Constructor*:
@@ -52,7 +52,7 @@ A Class will always have a __implicit__ default *Constructor*:
     });
 
     x = new Foo();
-    x.test(); => 'Hello World!'
+    x.test(); // 'Hello World!'
 
 
 ## Inheritance
@@ -72,7 +72,7 @@ Classes can __inherit__ from each other:
     });
 
     x = new Bar('Ivo');
-    x.test(); => 'Ivo'
+    x.test(); // 'Ivo'
 
 
 Each Class can be used as an __unbound__ *Constructor* as well:
@@ -92,7 +92,7 @@ Which allows for *multiple* inheritance:
 
 Which is supported by *unbound* methods:
 
-    Foo.bar(x); => 'tuff'
+    Foo.bar(x); // 'tuff'
 
 
 And __static__ methods - these are prefixed with `$`:
@@ -105,7 +105,7 @@ And __static__ methods - these are prefixed with `$`:
 
     });
 
-    Foo.$test(); => 'No instance needed!'
+    Foo.$test(); // 'No instance needed!'
 
 ## TODO
 
