@@ -50,6 +50,7 @@ function classFactory() {
 function clas(test, instance, a, b) {
 
     test.strictEqual(typeof instance, 'object');
+    test.strictEqual(typeof instance.is, 'function');
     test.strictEqual(instance.a, a);
     test.strictEqual(instance.b, b);
 
@@ -104,6 +105,9 @@ var tests = nodeunit.testCase({
         var Foo = new Class();
         test.strictEqual(typeof Foo, 'function');
         test.strictEqual(typeof new Foo(), 'object');
+        test.strictEqual(typeof Foo.is, 'function');
+        test.ok(Foo.is(Foo));
+        test.ok(Foo.is(Class));
 
         Foo();
         test.done();
@@ -119,8 +123,12 @@ var tests = nodeunit.testCase({
         });
 
         test.strictEqual(typeof Foo, 'function');
+        test.ok(Foo.is(Foo));
+        test.ok(Foo.is(Class));
 
         var foo = new Foo(1, 2);
+        test.ok(foo.is(Foo));
+        test.ok(foo.is(Class));
         clas(test, foo, 1, 2);
 
         test.done();
@@ -136,6 +144,7 @@ var tests = nodeunit.testCase({
         });
 
         test.strictEqual(typeof Foo, 'function');
+        test.ok(Foo.is(Foo));
 
         var foo = new Foo(1, 2);
         test.deepEqual(foo.test(1, 2), [foo, 1, 2]);
@@ -180,7 +189,13 @@ var tests = nodeunit.testCase({
 
         });
 
+        test.ok(namespace.Bar.is(namespace.Bar));
+        test.ok(namespace.Bar.is(namespace.Foo));
+
         var bar = new namespace.Bar(1, 2);
+
+        test.ok(bar.is(namespace.Bar));
+        test.ok(bar.is(namespace.Foo));
 
         clas(test, bar, 1, 2);
         unboundConstructor(test, namespace.Bar, 1, 2);
@@ -197,7 +212,7 @@ var tests = nodeunit.testCase({
         test.done();
     },
 
-    'Single Inheritance(Constructless)': function(test) {
+    'Multi Single Inheritance(Constructless)': function(test) {
 
         var Foo = classFactory('method', 'test');
         var Test = Class(Foo);
@@ -209,7 +224,17 @@ var tests = nodeunit.testCase({
 
         });
 
+        test.ok(Bar.is(Class));
+        test.ok(Bar.is(Foo));
+        test.ok(Bar.is(Test));
+        test.ok(Bar.is(Bar));
+
         var bar = new Bar(1, 2);
+
+        test.ok(bar.is(Class));
+        test.ok(bar.is(Foo));
+        test.ok(bar.is(Test));
+        test.ok(bar.is(Bar));
         clas(test, bar, 1, 2);
 
         unboundConstructor(test, Bar, 1, 2);
@@ -218,7 +243,7 @@ var tests = nodeunit.testCase({
 
     },
 
-    'Multi Inheritance': function(test) {
+    'Multiple Inheritance': function(test) {
         // test method
         // test unbound method
         // test method inherited a
@@ -239,8 +264,8 @@ var tests = nodeunit.testCase({
         boundMethod(test, foo, foo.method, 4, 5);
         unboundMethod(test, foo, Foo.method, 8, 9);
 
-        test.strictEqual(foo.$test, undefined);
-        staticMethod(test, Foo, Foo.$test, 10, 11);
+        test.strictEqual(foo.test, undefined);
+        staticMethod(test, Foo, Foo.test, 10, 11);
 
         test.done();
 
@@ -265,8 +290,8 @@ var tests = nodeunit.testCase({
         unboundMethod(test, foo, Bar.method, 9, 10);
         unboundMethod(test, foo, Foo.method, 9, 10);
 
-        test.strictEqual(foo.$test, undefined);
-        staticMethod(test, Foo, Foo.$test, 10, 11);
+        test.strictEqual(foo.test, undefined);
+        staticMethod(test, Foo, Foo.test, 10, 11);
 
         test.done();
 

@@ -1,117 +1,66 @@
-Featureful, yet simple Classes for JavaScript
-=============================================
+Class
+=====
 
-A trivial class fill in for JavaScript that focusses on extensible and low overhead.
+A trivial class fill in for JavaScript with a focus on being extensible and 
+having nearly zero overhead.
 
+## Synopsis
 
-## The Basics
+```javascript
+    Class(
+        constructor: Function || Class,
+        extends: Class(es),
+        properties: Object(s)
+    );
 
-Look, a __Class__!
+```
 
-    var Foo = Class();
+## Basics
 
-    x = new Foo();
-
-
-A *Class* can have a __Constructor__:
-
-    var Foo = Class(function(a, b) {
-        this.a = a;
-        this.b = b;
-    });
-
-    x = new Foo(1, 2);
-
-
-As well, as __Methods__:
-
-    var Foo = Class(function(name) {
-        this.name = name;
+```javascript
+    var Foo = Class(function(value) {
+        this.value = value;
 
     }, {
-
-        bar: function() {
-            return this.name;
+        method: function() {
+            return this.value;
         }
-
     });
 
-    x = new Foo('tuff');
-    x.bar(); // 'tuff'
+    var foo = new Foo(1);
+    foo.method(); // 1
+    foo.is(Foo); // true
+```
 
+## Inheritance and unbound calls
 
-A Class will always have a __implicit__ default *Constructor*:
+```javascript
+    var Bar = Class(function(value) {
+        Foo(this, value);
 
-
-    var Foo = Class({
-
-        test: function() {
-            return 'Hello World!';
+    }, Foo, {
+        method: function() {
+            return Foo.method(this) * 2;
         }
-
     });
 
-    x = new Foo();
-    x.test(); // 'Hello World!'
+    var bar = new Bar(1);
+    bar.method(); // 2
+    bar.is(Foo); // true
+    bar.is(Bar); // true
+```
 
+## Statics
 
-## Inheritance
-
-Classes can __inherit__ from each other:
-
-    var Foo = Class(function(name) {
-        this.name = name;
-    });
-
-    var Bar = Class(Foo, {
-        
-        test: function() {
-            return this.name;
+```javascript
+    var Baz = Class({
+        $deserialize: function(data) {
+            return new Baz(data.a, data.b);
         }
-
     });
 
-    x = new Bar('Ivo');
-    x.test(); // 'Ivo'
-
-
-Each Class can be used as an __unbound__ *Constructor* as well:
-
-    var Bar = Class(function() {
-        Foo(this, 'Ivo');
-
-    }, Foo);
-
-
-Which allows for *multiple* inheritance:
-
-    var Bar = Class(function() {
-        Foo(this, 'Ivo');
-
-    }, Foo, Baz);
-
-Which is supported by *unbound* methods:
-
-    Foo.bar(x); // 'tuff'
-
-
-And __static__ methods - these are prefixed with `$`:
-
-    var Foo = Class({
-
-        $test: function() {
-            return 'No instance needed!';
-        }
-
-    });
-
-    Foo.$test(); // 'No instance needed!'
-
-## TODO
-
-- Further reduce minified size 
-- Finish tests for all features
-
+    var baz = Baz.deserialize({ a: 1, b: 2};
+```
 
 ## License
 
