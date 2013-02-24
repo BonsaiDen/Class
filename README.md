@@ -11,8 +11,7 @@ having nearly zero overhead.
         constructor: Function || Class,
         extends: Class(es),
         properties: Object(s)
-    );
-
+    )
 ```
 
 ## Basics

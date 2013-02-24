@@ -109,6 +109,9 @@ var tests = nodeunit.testCase({
         test.ok(Foo.is(Foo));
         test.ok(Foo.is(Class));
 
+        test.ok(Class.is(Foo));
+        test.ok(!Class.is({}));
+
         Foo();
         test.done();
 
