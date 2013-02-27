@@ -106,13 +106,40 @@ var tests = nodeunit.testCase({
         test.strictEqual(typeof Foo, 'function');
         test.strictEqual(typeof new Foo(), 'object');
         test.strictEqual(typeof Foo.is, 'function');
-        test.ok(Foo.is(Foo));
-        test.ok(Foo.is(Class));
-
-        test.ok(Class.is(Foo));
-        test.ok(!Class.is({}));
 
         Foo();
+        test.done();
+
+    },
+
+    'Is': function(test) {
+
+        var Foo = new Class(),
+            Bar = new Class(Foo);
+
+        // Check if both are classes
+        test.ok(Class.is(Foo));
+        test.ok(Class.is(Bar));
+
+        // Check if both are sub classes
+        test.ok(Class.is(Foo, Class), 'Foo is a Class');
+        test.ok(Class.is(Foo, Foo), 'Foo is a class Foo');
+        test.ok(!Class.is(Foo, Bar), 'Foo is not a subclass of Bar');
+        test.ok(Class.is(Bar, Foo), 'Bar is a subclass of Foo');
+        test.ok(Class.is(Bar, Bar), 'Bar is a class Bar');
+
+        // Check if instances are classes
+        test.ok(Class.is(new Foo()));
+        test.ok(Class.is(new Bar()));
+
+        test.ok(Class.is(new Foo(), Foo), 'new Foo is instance of Foo');
+        test.ok(!Class.is(new Foo(), Bar), 'new Foo is not a instance of Bar');
+        test.ok(Class.is(new Bar(), Foo), 'new Bar is instance of Foo');
+        test.ok(Class.is(new Bar(), Bar), 'new Bar is instance of Bar');
+
+        test.ok(!Class.is({}), 'Object is not a class');
+        test.ok(!Class.is({ is: function() { return true; } }), 'Fake object is not a class');
+
         test.done();
 
     },
@@ -126,12 +153,8 @@ var tests = nodeunit.testCase({
         });
 
         test.strictEqual(typeof Foo, 'function');
-        test.ok(Foo.is(Foo));
-        test.ok(Foo.is(Class));
 
         var foo = new Foo(1, 2);
-        test.ok(foo.is(Foo));
-        test.ok(foo.is(Class));
         clas(test, foo, 1, 2);
 
         test.done();
@@ -147,7 +170,6 @@ var tests = nodeunit.testCase({
         });
 
         test.strictEqual(typeof Foo, 'function');
-        test.ok(Foo.is(Foo));
 
         var foo = new Foo(1, 2);
         test.deepEqual(foo.test(1, 2), [foo, 1, 2]);
@@ -192,13 +214,7 @@ var tests = nodeunit.testCase({
 
         });
 
-        test.ok(namespace.Bar.is(namespace.Bar));
-        test.ok(namespace.Bar.is(namespace.Foo));
-
         var bar = new namespace.Bar(1, 2);
-
-        test.ok(bar.is(namespace.Bar));
-        test.ok(bar.is(namespace.Foo));
 
         clas(test, bar, 1, 2);
         unboundConstructor(test, namespace.Bar, 1, 2);
@@ -227,17 +243,7 @@ var tests = nodeunit.testCase({
 
         });
 
-        test.ok(Bar.is(Class));
-        test.ok(Bar.is(Foo));
-        test.ok(Bar.is(Test));
-        test.ok(Bar.is(Bar));
-
         var bar = new Bar(1, 2);
-
-        test.ok(bar.is(Class));
-        test.ok(bar.is(Foo));
-        test.ok(bar.is(Test));
-        test.ok(bar.is(Bar));
         clas(test, bar, 1, 2);
 
         unboundConstructor(test, Bar, 1, 2);
