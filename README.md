@@ -61,6 +61,12 @@ having nearly zero overhead.
     var baz = Baz.deserialize({ a: 1, b: 2};
 ```
 
+## Converting `prototype` based things into classes
+
+```javascript
+    var FooClass = Class(Foo, Foo.prototype);
+```
+
 ## License
 
 Licensed under MIT.

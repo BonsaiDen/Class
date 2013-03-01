@@ -1,5 +1,5 @@
 /**
-  * Copyright (c) 2012 Ivo Wetzel.
+  * Copyright (c) 2012-2013 Ivo Wetzel.
   *
   * Permission is hereby granted, free of charge, to any person obtaining a copy
   * of this software and associated documentation files (the "Software"), to deal
@@ -19,297 +19,404 @@
   * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
   * THE SOFTWARE.
   */
+(function(exports) {
 
-if (typeof window === 'undefined') {
     var Class = require('../lib/Class').Class;
-    var nodeunit = require('nodeunit');
-}
 
+    // Helpers ----------------------------------------------------------------
+    function assertClass(test, clas) {
+        test.ok(Class.is(clas), 'Class.is recognizes the class as a Class');
+        test.ok(Class.is(clas, clas), 'Class.is recognizes the class as a Class itself');
 
-// Helpers --------------------------------------------------------------------
-function classFactory() {
+        var inst = new clas();
+        test.ok(Class.is(inst), 'Class.is recognizes a instance as a Class');
+        test.ok(Class.is(inst, clas), 'Class.is recognizes a instance as being of the class itself');
+    }
 
-    var methods = {};
-    for(var i = 0, l = arguments.length; i < l; i++) {
+    function assertConstructor(test, clas) {
 
-        var methodName = arguments[i];
-        methods[methodName] = function(a, b) {
-            return [this, this.a, this.b, a, b];
-        };
+        var value = Math.random(),
+            instance = new clas(value);
+
+        test.strictEqual(value, instance.value, 'Constructor assigns correct field');
+
+        var obj = {};
+        clas(obj, value);
+        test.strictEqual(value, obj.value, 'Unbound-Constructor assigns correct field');
 
     }
 
-    return Class(function(a, b) {
-        this.a = a;
-        this.b = b;
+    function assertMethod(test, clas, name) {
 
-    }, methods);
+        var instance = new clas(),
+            value = Math.random();
 
-}
+        // Members
+        test.strictEqual('function', typeof instance[name], 'Instance has method');
+        test.strictEqual(value, instance[name](value), 'Method returns correct result');
 
-function clas(test, instance, a, b) {
+        // Unbound
+        test.strictEqual('function', typeof clas[name], 'Class has unbound method');
+        test.strictEqual(value, clas[name](null, value), 'Unbound-Method returns correct result without instance context');
+        test.strictEqual(value, clas[name](instance, value), 'Unbound-Method returns correct result with instance context');
 
-    test.strictEqual(typeof instance, 'object');
-    test.strictEqual(typeof instance.is, 'function');
-    test.strictEqual(instance.a, a);
-    test.strictEqual(instance.b, b);
+    }
 
-}
+    function assertStaticMethod(test, clas, name) {
 
-function unboundConstructor(test, clas, a, b) {
+        var instance = new clas(),
+            value = Math.random();
 
-    test.strictEqual(typeof clas, 'function');
+        // Members
+        test.strictEqual('undefined', typeof instance[name], 'Instance has no static method');
 
-    var instance = { 'me': 123 };
-    test.strictEqual(clas(instance, a, b), undefined);
-    test.strictEqual(instance.a, a);
-    test.strictEqual(instance.b, b);
+        // Static
+        test.strictEqual('function', typeof clas[name], 'Class has static method');
+        test.strictEqual(value, clas[name](value), 'Static-Method returns correct result');
 
-}
+    }
 
-function boundMethod(test, instance, method, a, b) {
+    function assertStaticField(test, clas, name, value) {
 
-    test.strictEqual(typeof method, 'function');
+        var instance = new clas();
 
-    var result = method.call(instance, a, b);
-    test.deepEqual(result, [instance, instance.a, instance.b, a, b]);
+        // Members
+        test.strictEqual('undefined', typeof instance[name], 'Instance has no static field');
 
-}
+        // Static
+        test.strictEqual(typeof value, typeof clas[name], 'Class has static field');
+        test.strictEqual(value, clas[name], 'Static field is a reference');
 
-function unboundMethod(test, instance, method, a, b) {
+    }
 
-    test.strictEqual(typeof method, 'function');
-    test.strictEqual(typeof instance, 'object');
+    function assertInheritance(test, clas, base) {
+        var inst = new clas();
+        test.ok(Class.is(clas, base), 'Class.is recognizes the class as a extension of the base Class');
+        test.ok(Class.is(inst, base), 'Class.is recognizes a instance as being the exentions of the base Class');
+    }
 
-    var result = method(instance, a, b);
-    test.deepEqual(result, [instance, instance.a, instance.b, a, b]);
 
-}
+    // Unit Tests -------------------------------------------------------------
+    exports.Basic = {
 
-function staticMethod(test, clas, method, a, b) {
+        create: function(test) {
+            assertClass(test, Class());
+            test.done();
+        },
 
-    test.strictEqual(typeof method, 'function');
-    test.strictEqual(typeof clas, 'function');
+        withConstructor: function(test) {
 
-    var result = method.call(null, a, b);
-    test.deepEqual(result, [clas, undefined, undefined, a, b]);
+            var template = Class(function(value) {
+                this.value = value;
+            });
 
-}
+            assertClass(test, template);
+            assertConstructor(test, template);
+            test.done();
 
+        },
 
-// Tests ----------------------------------------------------------------------
-var tests = nodeunit.testCase({
+        withMethods: function(test) {
 
-    'Plain': function(test) {
+            var template = Class({
+                a: function(value) { return value; },
+                b: function(value) { return value; }
+            });
 
-        var Foo = new Class();
-        test.strictEqual(typeof Foo, 'function');
-        test.strictEqual(typeof new Foo(), 'object');
-        test.strictEqual(typeof Foo.is, 'function');
+            assertClass(test, template);
 
-        Foo();
-        test.done();
+            assertMethod(test, template, 'a');
+            assertMethod(test, template, 'b');
 
-    },
+            test.done();
 
-    'Is': function(test) {
+        },
 
-        var Foo = new Class(),
-            Bar = new Class(Foo);
+        withConstructorAndMethods: function(test) {
 
-        // Check if both are classes
-        test.ok(Class.is(Foo));
-        test.ok(Class.is(Bar));
+            var template = Class(function(value) {
+                this.value = value;
+            }, {
+                a: function(value) { return value; },
+                b: function(value) { return value; }
+            });
 
-        // Check if both are sub classes
-        test.ok(Class.is(Foo, Class), 'Foo is a Class');
-        test.ok(Class.is(Foo, Foo), 'Foo is a class Foo');
-        test.ok(!Class.is(Foo, Bar), 'Foo is not a subclass of Bar');
-        test.ok(Class.is(Bar, Foo), 'Bar is a subclass of Foo');
-        test.ok(Class.is(Bar, Bar), 'Bar is a class Bar');
+            assertClass(test, template);
+            assertConstructor(test, template);
+            assertMethod(test, template, 'a');
+            assertMethod(test, template, 'b');
 
-        // Check if instances are classes
-        test.ok(Class.is(new Foo()));
-        test.ok(Class.is(new Bar()));
+            test.done();
 
-        test.ok(Class.is(new Foo(), Foo), 'new Foo is instance of Foo');
-        test.ok(!Class.is(new Foo(), Bar), 'new Foo is not a instance of Bar');
-        test.ok(Class.is(new Bar(), Foo), 'new Bar is instance of Foo');
-        test.ok(Class.is(new Bar(), Bar), 'new Bar is instance of Bar');
+        }
 
-        test.ok(!Class.is({}), 'Object is not a class');
-        test.ok(!Class.is({ is: function() { return true; } }), 'Fake object is not a class');
+    };
 
-        test.done();
+    exports.Static = {
 
-    },
+        methods: function(test) {
 
+            var template = Class({
+                $a: function(value) { return value; },
+                $b: function(value) { return value; }
+            });
 
-    'Methodless': function(test) {
+            assertClass(test, template);
+            assertStaticMethod(test, template, 'a');
+            assertStaticMethod(test, template, 'b');
 
-        var Foo = new Class(function(a, b) {
-            this.a = a;
-            this.b = b;
-        });
+            test.done();
 
-        test.strictEqual(typeof Foo, 'function');
+        },
 
-        var foo = new Foo(1, 2);
-        clas(test, foo, 1, 2);
+        fields: function(test) {
 
-        test.done();
+            var staticField = {
+                key: 'value'
+            };
 
-    },
+            var template = Class({
+                $a: 100,
+                $b: staticField
+            });
 
-    'Constructless': function(test) {
+            assertClass(test, template);
+            assertStaticField(test, template, 'a', 100);
+            assertStaticField(test, template, 'b', staticField);
 
-        var Foo = new Class({
-            test: function(a, b) {
-                return [this, a, b];
-            }
-        });
+            test.done();
 
-        test.strictEqual(typeof Foo, 'function');
+        }
 
-        var foo = new Foo(1, 2);
-        test.deepEqual(foo.test(1, 2), [foo, 1, 2]);
-        test.done();
+    };
 
-    },
+    exports.Inheritance = {
 
-    'Single': function(test) {
+        single: function(test) {
 
-        var Foo = classFactory('method', 'test'),
-            foo = new Foo(1, 2);
+            var staticField = {
+                key: 'value'
+            };
 
-        clas(test, foo, 1, 2);
-        unboundConstructor(test, Foo, 1, 2);
+            var Base = Class(function(value) {
+                this.value = value;
 
-        boundMethod(test, foo, foo.method, 4, 5);
-        boundMethod(test, foo, foo.test, 6, 7);
+            }, {
+                $field: staticField,
 
-        unboundMethod(test, foo, Foo.method, 8, 9);
-        unboundMethod(test, foo, Foo.test, 10, 11);
+                a: function(value) {
+                    return value;
+                },
 
-        test.done();
-
-    },
-
-    'Single Inheritance': function(test) {
-
-        // Test against non-working values for the this inside the class thing
-        // sounds crazy, but prevents errors!
-        var namespace = {
-            Foo: classFactory('method', 'test')
-        };
-
-        namespace.Bar = Class(function() {
-            namespace.Foo(this, 1, 2);
-
-        }, namespace.Foo, {
-
-            custom: function(a, b) {
-                return [this, this.a, this.b, a, b];
-            }
-
-        });
-
-        var bar = new namespace.Bar(1, 2);
-
-        clas(test, bar, 1, 2);
-        unboundConstructor(test, namespace.Bar, 1, 2);
-
-        boundMethod(test, bar, bar.method, 4, 5);
-        boundMethod(test, bar, bar.test, 6, 7);
-
-        unboundMethod(test, bar, namespace.Bar.method, 8, 9);
-        unboundMethod(test, bar, namespace.Bar.test, 10, 11);
-
-        boundMethod(test, bar, bar.custom, 6, 7);
-        unboundMethod(test, bar, namespace.Bar.custom, 10, 11);
-
-        test.done();
-    },
-
-    'Multi Single Inheritance(Constructless)': function(test) {
-
-        var Foo = classFactory('method', 'test');
-        var Test = Class(Foo);
-        var Bar = Class(Test, {
-
-            custom: function(a, b) {
-                return [this, this.a, this.b, a, b];
-            }
-
-        });
-
-        var bar = new Bar(1, 2);
-        clas(test, bar, 1, 2);
-
-        unboundConstructor(test, Bar, 1, 2);
-
-        test.done();
-
-    },
-
-    'Multiple Inheritance': function(test) {
-        // test method
-        // test unbound method
-        // test method inherited a
-        // test unbound method inherited a
-        // test method inherited b
-        // test unbound method inherited b
-        test.done();
-    },
-
-    'Static': function(test) {
-
-        var Foo = classFactory('method', '$test'),
-            foo = new Foo(1, 2);
-
-        clas(test, foo, 1, 2);
-        unboundConstructor(test, Foo, 1, 2);
-
-        boundMethod(test, foo, foo.method, 4, 5);
-        unboundMethod(test, foo, Foo.method, 8, 9);
-
-        test.strictEqual(foo.test, undefined);
-        staticMethod(test, Foo, Foo.test, 10, 11);
-
-        test.done();
-
-    },
-
-    'Static Inheritance': function(test) {
-
-        var Bar = classFactory('method', '$test'),
-            Foo = Class(function(a, b) {
-                Bar(this, a, b);
-            }, Bar, {
-                method: function(a, b) {
-                    return Bar.method(this, a, b);
+                $c: function(value) {
+                    return value;
                 }
-            }),
-            foo = new Foo(1, 2);
 
-        clas(test, foo, 1, 2);
-        unboundConstructor(test, Foo, 1, 2);
+            });
 
-        boundMethod(test, foo, foo.method, 5, 6);
-        unboundMethod(test, foo, Bar.method, 9, 10);
-        unboundMethod(test, foo, Foo.method, 9, 10);
+            var Sub = Class(function(value) {
+                Base(this, value);
 
-        test.strictEqual(foo.test, undefined);
-        staticMethod(test, Foo, Foo.test, 10, 11);
+            }, Base, {
+                b: function(value) {
+                    return value;
+                }
+            });
 
-        test.done();
+            assertClass(test, Sub);
+            assertConstructor(test, Sub);
+            assertMethod(test, Sub, 'a');
+            assertMethod(test, Sub, 'b');
+            assertStaticMethod(test, Sub, 'c');
+            assertStaticField(test, Sub, 'field', staticField);
+            assertInheritance(test, Sub, Base);
 
-    }
+            var Direct = Class(Base, {
+                b: function(value) {
+                    return value;
+                }
+            });
 
-});
+            assertClass(test, Direct);
+            assertConstructor(test, Direct);
+            assertMethod(test, Direct, 'a');
+            assertMethod(test, Direct, 'b');
+            assertStaticMethod(test, Direct, 'c');
+            assertStaticField(test, Direct, 'field', staticField);
+            assertInheritance(test, Direct, Base);
 
+            test.done();
 
-if (typeof window === 'undefined') {
-    module.exports = tests;
-}
+        },
+
+        dual: function(test) {
+
+            var staticField = {
+                key: 'value'
+            };
+
+            var Base = Class(function(value) {
+                this.value = value;
+
+            }, {
+                $field: staticField,
+
+                a: function(value) {
+                    return value;
+                },
+
+                $c: function(value) {
+                    return value;
+                }
+
+            });
+
+            var staticArray = [];
+
+            var Sub = Class(function(value) {
+                Base(this, value);
+
+            }, Base, {
+                $array: staticArray,
+                b: function(value) {
+                    return value;
+                }
+            });
+
+            var Final = Class(function(value) {
+                Sub(this, value);
+
+            }, Sub, {
+                d: function(value) {
+                    return value;
+                }
+            });
+
+            assertClass(test, Final);
+            assertConstructor(test, Final);
+            assertMethod(test, Final, 'a');
+            assertMethod(test, Final, 'b');
+            assertStaticMethod(test, Final, 'c');
+            assertMethod(test, Final, 'd');
+            assertStaticField(test, Final, 'array', staticArray);
+            assertStaticField(test, Final, 'field', staticField);
+            assertInheritance(test, Final, Sub);
+            assertInheritance(test, Final, Base);
+
+            test.done();
+
+        },
+
+        multiple: function(test) {
+
+            var A = Class(function(value) {
+                this.valueB = value;
+
+            }, {
+                a: function(value) {
+                    return value;
+                },
+
+                $as: function(value) {
+                    return value;
+                }
+            });
+
+            var B = Class(function(value) {
+                this.valueB = value;
+
+            }, {
+                b: function(value) {
+                    return value;
+                },
+
+                $bs: function(value) {
+                    return value;
+                }
+            });
+
+            var C = Class(function(value) {
+                this.valueC = value;
+
+            }, {
+                c: function(value) {
+                    return value;
+                },
+
+                $cs: function(value) {
+                    return value;
+                }
+            });
+
+            var M = Class(function(value) {
+                this.value = value;
+                A(this, value);
+                B(this, value);
+                C(this, value);
+
+            }, A, B, C, {
+                m: function(value) {
+                    return value;
+                },
+
+                $ms: function(value) {
+                    return value;
+                }
+            });
+
+            assertClass(test, M);
+            assertConstructor(test, M);
+            assertMethod(test, M, 'a');
+            assertMethod(test, M, 'b');
+            assertMethod(test, M, 'c');
+            assertMethod(test, M, 'm');
+            assertStaticMethod(test, M, 'as');
+            assertStaticMethod(test, M, 'bs');
+            assertStaticMethod(test, M, 'cs');
+            assertStaticMethod(test, M, 'ms');
+
+            assertInheritance(test, M, A);
+            assertInheritance(test, M, B);
+            assertInheritance(test, M, C);
+
+            test.done();
+
+        }
+
+    };
+
+    exports.Compatibility = {
+
+        wrapPrototypeBased: function(test) {
+
+            var Foo = function(value) {
+                this.value = value;
+            };
+
+            Foo.prototype = {
+                a: function(value) { return value; },
+                b: function(value) { return value; },
+
+                // These should NOT get converted to static fields
+                $a: function(value) { return value; },
+                $b: function(value) { return value; }
+
+            };
+
+            var template = Class(Foo, Foo.prototype);
+
+            assertClass(test, template);
+            assertConstructor(test, template);
+            assertMethod(test, template, 'a');
+            assertMethod(test, template, 'b');
+            assertMethod(test, template, '$a');
+            assertMethod(test, template, '$b');
+
+            test.done();
+
+        }
+
+    };
+
+})(typeof exports !== 'undefined' ? exports : (this.tests = {}));
 

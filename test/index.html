@@ -1,20 +1,27 @@
 <!doctype html>
 <html lang="en">
     <head>
-        <title>BiSON Tests</title>
+        <title>Class Unit Tests</title>
         <meta charset="utf-8">
-        <script src="nodeunit.js"></script>
-        <script src="../lib/bison.js"></script>
-        <script src="test.js"></script>
+
+        <script type="text/javascript" src="nodeunit.js"></script>
+        <script type="text/javascript" src="../lib/Class.js"></script>
+
+        <script type="text/javascript" charset="utf-8">
+            function require() {
+                return window;
+            }
+        </script>
+        <script type="text/javascript" src="test.js"></script>
+
     </head>
 
     <body>
-        <script>
-            nodeunit.run({
-                'bison': tests
-            });
+
+        <script type="text/javascript">
+            nodeunit.run(tests);
         </script>
+
     </body>
 </html>
-
 
