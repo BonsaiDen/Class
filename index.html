@@ -1,165 +1,151 @@
-<!doctype html>
+<!DOCTYPE html>
 <html>
-  <head>
-    <meta charset="utf-8">
-    <meta http-equiv="X-UA-Compatible" content="chrome=1">
-    <title>Class by BonsaiDen</title>
-    <link rel="stylesheet" href="stylesheets/styles.css">
-    <link rel="stylesheet" href="stylesheets/pygment_trac.css">
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js"></script>
-    <script src="javascripts/main.js"></script>
-    <!--[if lt IE 9]>
-      <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
-    <![endif]-->
-    <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
 
+  <head>
+    <meta charset='utf-8' />
+    <meta http-equiv="X-UA-Compatible" content="chrome=1" />
+    <meta name="description" content="Class : A Class Factory for JavaScript" />
+
+    <link rel="stylesheet" type="text/css" media="screen" href="stylesheets/stylesheet.css">
+
+    <title>Class</title>
   </head>
+
   <body>
 
-      <header>
-        <h1>Class</h1>
-        <p>Featureful, yet simple Classes for JavaScript</p>
-      </header>
+    <!-- HEADER -->
+    <div id="header_wrap" class="outer">
+        <header class="inner">
+          <a id="forkme_banner" href="https://github.com/BonsaiDen/Class">View on GitHub</a>
 
-      <div id="banner">
-        <span id="logo"></span>
+          <h1 id="project_title">Class</h1>
+          <h2 id="project_tagline">A Class Factory for JavaScript</h2>
 
-        <a href="https://github.com/BonsaiDen/Class" class="button fork"><strong>Fork On GitHub</strong></a>
-        <div class="downloads">
-          <span>Downloads:</span>
-          <ul>
-            <li><a href="https://github.com/BonsaiDen/Class/zipball/master" class="button">ZIP</a></li>
-            <li><a href="https://github.com/BonsaiDen/Class/tarball/master" class="button">TAR</a></li>
-          </ul>
-        </div>
+            <section id="downloads">
+              <a class="zip_download_link" href="https://github.com/BonsaiDen/Class/zipball/master">Download this project as a .zip file</a>
+              <a class="tar_download_link" href="https://github.com/BonsaiDen/Class/tarball/master">Download this project as a tar.gz file</a>
+            </section>
+        </header>
+    </div>
 
-      </div><!-- end banner -->
+    <!-- MAIN CONTENT -->
+    <div id="main_content_wrap" class="outer">
+      <section id="main_content" class="inner">
+        <h2>The <code>Class</code> Factory</h2>
 
-    <div class="wrapper">
-      <nav>
-        <ul></ul>
-      </nav>
-      <section>
-        <p>A trivial class fill in for JavaScript that focusses on extensible and low overhead.</p>
+<p>The <code>Class</code> factory is the <em>base</em> of all created <em>Classes</em>. This means that all
+Classes created by it automatically inherit from a special method <code>is</code> from it.</p>
 
-<h2>The Basics</h2>
+<p><code>Class.is</code> basically works like <code>instanceof</code>, where first parameter would be 
+the left-hand value of the <code>instanceof</code> operator and the (optional) second 
+parameter the right-hand value.</p>
 
-<p>Look, a <strong>Class</strong>!</p>
+<p>The <code>is</code> method is both Class and a Instance method:</p>
 
-<pre><code>var Foo = Class();
+<div class="highlight"><pre>    <span class="kd">var</span> <span class="nx">Foo</span> <span class="o">=</span> <span class="nx">Class</span><span class="p">();</span>
+    <span class="nx">Class</span><span class="p">.</span><span class="nx">is</span><span class="p">(</span><span class="nx">Foo</span><span class="p">);</span> <span class="c1">// true</span>
+    <span class="nx">Class</span><span class="p">.</span><span class="nx">is</span><span class="p">(</span><span class="nx">Foo</span><span class="p">,</span> <span class="nx">Class</span><span class="p">);</span> <span class="c1">// true</span>
 
-x = new Foo();
-</code></pre>
+    <span class="k">new</span> <span class="nx">Foo</span><span class="p">().</span><span class="nx">is</span><span class="p">(</span><span class="nx">Class</span><span class="p">);</span> <span class="c1">// true</span>
+    <span class="k">new</span> <span class="nx">Foo</span><span class="p">().</span><span class="nx">is</span><span class="p">(</span><span class="nx">Foo</span><span class="p">);</span> <span class="c1">// true</span>
+</pre></div>
 
-<p>A <em>Class</em> can have a <strong>Constructor</strong>:</p>
+<h2>Basic Usage</h2>
 
-<pre><code>var Foo = Class(function(a, b) {
-    this.a = a;
-    this.b = b;
-});
+<p>To create the most simple <em>Class</em> just pass in a function as the constructor and 
+an object with the members into the <code>Class</code> factory:</p>
 
-x = new Foo(1, 2);
-</code></pre>
+<div class="highlight"><pre>    <span class="kd">var</span> <span class="nx">Foo</span> <span class="o">=</span> <span class="nx">Class</span><span class="p">(</span><span class="kd">function</span><span class="p">(</span><span class="nx">value</span><span class="p">)</span> <span class="p">{</span>
+        <span class="k">this</span><span class="p">.</span><span class="nx">value</span> <span class="o">=</span> <span class="nx">value</span><span class="p">;</span>
 
-<p>As well, as <strong>Methods</strong>:</p>
+    <span class="p">},</span> <span class="p">{</span>
+        <span class="nx">getValue</span><span class="o">:</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+            <span class="k">return</span> <span class="k">this</span><span class="p">.</span><span class="nx">value</span><span class="p">;</span>
+        <span class="p">}</span>
+    <span class="p">});</span>
 
-<pre><code>var Foo = Class(function(name) {
-    this.name = name;
+    <span class="k">new</span> <span class="nx">Foo</span><span class="p">(</span><span class="mi">1</span><span class="p">).</span><span class="nx">getValue</span><span class="p">();</span> <span class="c1">// 1</span>
+</pre></div>
 
-}, {
+<blockquote>
+<p>Note: Both of the arguments are <em>optional</em> and either one can be left out.</p>
+</blockquote>
 
-    bar: function() {
-        return this.name;
-    }
+<h2>Inheritance and Unbound Methods</h2>
 
-});
+<p>You can pass any number of other <em>Classes</em> into the <code>Class</code> factory to make 
+the new class inherit from them.</p>
 
-x = new Foo('tuff');
-x.bar(); // 'tuff'
-</code></pre>
+<p>If the first parameter to the factory is either a <code>function</code> or a <code>Class</code>, 
+it will become the constructor of the new <em>Class</em>.</p>
 
-<p>A Class will always have a <strong>implicit</strong> default <em>Constructor</em>:</p>
+<p>If a Class inherits from another one, it can call that Class's <em>unbound</em> 
+constructor from within it's own, passing <em>itself</em> as the instance argument:</p>
 
-<pre><code>var Foo = Class({
+<div class="highlight"><pre>    <span class="kd">var</span> <span class="nx">Bar</span> <span class="o">=</span> <span class="nx">Class</span><span class="p">(</span><span class="kd">function</span><span class="p">(</span><span class="nx">value</span><span class="p">)</span> <span class="p">{</span>
+        <span class="nx">Foo</span><span class="p">(</span><span class="k">this</span><span class="p">,</span> <span class="nx">value</span><span class="p">);</span>
 
-    test: function() {
-        return 'Hello World!';
-    }
+    <span class="p">},</span> <span class="nx">Foo</span><span class="p">,</span> <span class="p">...</span> <span class="p">);</span>
 
-});
+</pre></div>
 
-x = new Foo();
-x.test(); // 'Hello World!'
-</code></pre>
+<p>All methods also have a unbound Class version available, this makes calling 
+super methods easy.</p>
 
-<h2>Inheritance</h2>
+<div class="highlight"><pre>    <span class="kd">var</span> <span class="nx">Bar</span> <span class="o">=</span> <span class="nx">Class</span><span class="p">(...</span> <span class="p">,</span> <span class="nx">Foo</span><span class="p">,</span> <span class="p">{</span>
+        <span class="nx">method</span><span class="o">:</span> <span class="kd">function</span><span class="p">(</span><span class="nx">value</span><span class="p">)</span> <span class="p">{</span>
+            <span class="k">return</span> <span class="nx">Foo</span><span class="p">.</span><span class="nx">method</span><span class="p">(</span><span class="k">this</span><span class="p">,</span> <span class="nx">value</span><span class="p">);</span>
+        <span class="p">}</span>
+    <span class="p">});</span>
 
-<p>Classes can <strong>inherit</strong> from each other:</p>
+</pre></div>
 
-<pre><code>var Foo = Class(function(name) {
-    this.name = name;
-});
+<h2>Static Fields and Methods</h2>
 
-var Bar = Class(Foo, {
+<p>Any field prefixed with a <code>$</code> will automatically become a static one:</p>
 
-    test: function() {
-        return this.name;
-    }
+<div class="highlight"><pre>
+    <span class="kd">var</span> <span class="nx">Baz</span> <span class="o">=</span> <span class="nx">Class</span><span class="p">({</span>
+        <span class="nx">$fromFactory</span><span class="o">:</span> <span class="kd">function</span><span class="p">(</span><span class="nx">data</span><span class="p">)</span> <span class="p">{</span>
+            <span class="k">return</span> <span class="k">new</span> <span class="nx">Baz</span><span class="p">(</span><span class="nx">data</span><span class="p">);</span>
+        <span class="p">}</span>
+    <span class="p">});</span>
 
-});
+    <span class="nx">instance</span> <span class="o">=</span> <span class="nx">Baz</span><span class="p">.</span><span class="nx">fromFactory</span><span class="p">({</span> <span class="p">...</span> <span class="p">});</span>
+</pre></div>
 
-x = new Bar('Ivo');
-x.test(); // 'Ivo'
-</code></pre>
+<blockquote>
+<p>Note: Static fields are direct references; thus, that they are shared 
+between any sub classes and their bases.</p>
+</blockquote>
 
-<p>Each Class can be used as an <strong>unbound</strong> <em>Constructor</em> as well:</p>
+<h2>Wrapping <code>prototype</code> based structures into Classes</h2>
 
-<pre><code>var Bar = Class(function() {
-    Foo(this, 'Ivo');
+<p>For easy integration of other <code>prototype</code> based code, you can simply wrap the 
+desired structures as classes:</p>
 
-}, Foo);
-</code></pre>
+<div class="highlight"><pre>    <span class="kd">var</span> <span class="nx">FooClass</span> <span class="o">=</span> <span class="nx">Class</span><span class="p">(</span><span class="nx">Foo</span><span class="p">,</span> <span class="nx">Foo</span><span class="p">.</span><span class="nx">prototype</span><span class="p">);</span>
+</pre></div>
 
-<p>Which allows for <em>multiple</em> inheritance:</p>
+<p>The <code>Class</code> factory will actually do the right thing here and will <strong>not</strong> 
+convert fields which are prefixed with <code>$</code> into statics in order to avoid 
+breaking existing code.</p>
 
-<pre><code>var Bar = Class(function() {
-    Foo(this, 'Ivo');
-
-}, Foo, Baz);
-</code></pre>
-
-<p>Which is supported by <em>unbound</em> methods:</p>
-
-<pre><code>Foo.bar(x); // 'tuff'
-</code></pre>
-
-<p>And <strong>static</strong> methods - these are prefixed with <code>$</code>:</p>
-
-<pre><code>var Foo = Class({
-
-    $test: function() {
-        return 'No instance needed!';
-    }
-
-});
-
-Foo.$test(); // 'No instance needed!'
-</code></pre>
-
-<h2>TODO</h2>
-
-<ul>
-<li>Further reduce minified size </li>
-<li>Finish tests for all features</li>
-</ul><h2>License</h2>
+<h2>License</h2>
 
 <p>Licensed under MIT.</p>
       </section>
-      <footer>
-        <p>Project maintained by <a href="https://github.com/BonsaiDen">BonsaiDen</a></p>
-        <p><small>Hosted on GitHub Pages &mdash; Theme by <a href="https://twitter.com/#!/michigangraham">mattgraham</a></small></p>
+    </div>
+
+    <!-- FOOTER  -->
+    <div id="footer_wrap" class="outer">
+      <footer class="inner">
+        <p class="copyright">Class maintained by <a href="https://github.com/BonsaiDen">BonsaiDen</a></p>
+        <p>Published with <a href="http://pages.github.com">GitHub Pages</a></p>
       </footer>
     </div>
-    <!--[if !IE]><script>fixScale(document);</script><!--<![endif]-->
+
+    
+
   </body>
 </html>
