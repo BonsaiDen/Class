@@ -31,7 +31,7 @@
     <!-- MAIN CONTENT -->
     <div id="main_content_wrap" class="outer">
       <section id="main_content" class="inner">
-        <h2>The <code>Class</code> Factory</h2>
+        <h5>The <code>Class</code> Factory</h5>
 
 <p>The <code>Class</code> factory is the <em>base</em> of all created <em>Classes</em>. This means that all
 Classes created by it automatically inherit from a special method <code>is</code> from it.</p>
@@ -50,7 +50,7 @@ parameter the right-hand value.</p>
     <span class="k">new</span> <span class="nx">Foo</span><span class="p">().</span><span class="nx">is</span><span class="p">(</span><span class="nx">Foo</span><span class="p">);</span> <span class="c1">// true</span>
 </pre></div>
 
-<h2>Basic Usage</h2>
+<h5>Basic Usage</h5>
 
 <p>To create the most simple <em>Class</em> just pass in a function as the constructor and 
 an object with the members into the <code>Class</code> factory:</p>
@@ -71,7 +71,7 @@ an object with the members into the <code>Class</code> factory:</p>
 <p>Note: Both of the arguments are <em>optional</em> and either one can be left out.</p>
 </blockquote>
 
-<h2>Inheritance and Unbound Methods</h2>
+<h5>Inheritance and Unbound Methods</h5>
 
 <p>You can pass any number of other <em>Classes</em> into the <code>Class</code> factory to make 
 the new class inherit from them.</p>
@@ -100,7 +100,7 @@ super methods easy.</p>
 
 </pre></div>
 
-<h2>Static Fields and Methods</h2>
+<h5>Static Fields and Methods</h5>
 
 <p>Any field prefixed with a <code>$</code> will automatically become a static one:</p>
 
@@ -115,11 +115,11 @@ super methods easy.</p>
 </pre></div>
 
 <blockquote>
-<p>Note: Static fields are direct references; thus, that they are shared 
+<p>Note: Static fields are direct references; thus, they are shared 
 between any sub classes and their bases.</p>
 </blockquote>
 
-<h2>Wrapping <code>prototype</code> based structures into Classes</h2>
+<h5>Wrapping <code>prototype</code> based structures into Classes</h5>
 
 <p>For easy integration of other <code>prototype</code> based code, you can simply wrap the 
 desired structures as classes:</p>
@@ -131,7 +131,7 @@ desired structures as classes:</p>
 convert fields which are prefixed with <code>$</code> into statics in order to avoid 
 breaking existing code.</p>
 
-<h2>License</h2>
+<h5>License</h5>
 
 <p>Licensed under MIT.</p>
       </section>
