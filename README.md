@@ -18,7 +18,7 @@ The `is` method is both Class and a Instance method:
     new Foo().is(Foo); // true
 ```
 
-## Basic Usage
+### Basic Usage
 
 To create the most simple *Class* just pass in a function as the constructor and 
 an object with the members into the `Class` factory:
@@ -39,7 +39,7 @@ an object with the members into the `Class` factory:
 > Note: Both of the arguments are *optional* and either one can be left out.
 
 
-## Inheritance and Unbound Methods
+### Inheritance and Unbound Methods
 
 You can pass any number of other *Classes* into the `Class` factory to make 
 the new class inherit from them.
@@ -70,26 +70,33 @@ super methods easy.
 
 ```
 
-## Static Fields and Methods
+### Static Fields and Methods
 
-Any field prefixed with a `$` will automatically become a static one:
+Any field prefixed with a `$` will automatically become a static one and the `$` 
+prefix will get removed:
 
 ```javascript
 
     var Baz = Class({
         $fromFactory: function(data) {
             return new Baz(data);
+        },
+
+        $: function(magicNumber) {
+            return magicNumber * magicConstant;
         }
     });
 
     instance = Baz.fromFactory({ ... });
+    value = Baz.$();
+
 ```
 
-> Note: Static fields are direct references; thus, that they are shared 
+> Note: Static fields are direct references; thus, they are shared 
 > between any sub classes and their bases.
 
 
-## Wrapping `prototype` based structures into Classes
+### Wrapping `prototype` based structures into Classes
 
 For easy integration of other `prototype` based code, you can simply wrap the 
 desired structures as classes:
@@ -102,7 +109,8 @@ The `Class` factory will actually do the right thing here and will **not**
 convert fields which are prefixed with `$` into statics in order to avoid 
 breaking existing code.
 
-## License
+
+### License
 
 Licensed under MIT.
 

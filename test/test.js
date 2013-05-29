@@ -165,6 +165,13 @@
             assertStaticMethod(test, template, 'a');
             assertStaticMethod(test, template, 'b');
 
+            var nonTemplate = Class({
+                $: function(value) { return value; }
+            });
+
+            assertClass(test, nonTemplate);
+            assertMethod(test, nonTemplate, '$');
+
             test.done();
 
         },
